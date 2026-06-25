@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vereinsmeisterschaft TC Ampflwang</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;font-size:14px;min-height:100vh}
+.app{max-width:960px;margin:0 auto;padding:1rem}
+@media(min-width:1100px){.app{max-width:1400px}}
+@media(min-width:1500px){.app{max-width:1800px}}
+.header{background:#fff;border-radius:12px;border:1px solid #e5e5e0;padding:1rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.header h1{font-size:17px;font-weight:600}
+.header .sub{font-size:12px;color:#888;margin-top:2px}
+.steps{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.step{padding:6px 14px;border-radius:8px;border:1px solid #e0e0d8;font-size:12px;color:#888;cursor:default;user-select:none;transition:all .15s}
+.step.active{background:#eeedfe;color:#3c3489;border-color:#afa9ec;font-weight:600}
+.step.done{background:#e1f5ee;color:#085041;border-color:#5dcaa5;cursor:pointer}
+.step.done:hover{background:#c0e8d8}
+.card{background:#fff;border-radius:12px;border:1px solid #e5e5e0;padding:1rem 1.25rem;margin-bottom:12px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.page{display:none}.page.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.stat{background:#f5f5f0;border-radius:8px;padding:.75rem;text-align:center}
+.stat .n{font-size:22px;font-weight:600}
+.stat .l{font-size:11px;color:#888;margin-top:2px}
+input[type=text],input[type=number],select{width:100%;padding:8px 10px;border:1px solid #e0e0d8;border-radius:8px;font-size:13px;background:#fff;color:#1a1a1a;outline:none;transition:border .15s}
+input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77dd}
+.row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #e0e0d8;background:#fff;color:#1a1a1a;transition:all .15s}
+.btn:hover{background:#f5f5f0}.btn:active{transform:scale(.98)}
+.btn-primary{background:#534ab7;color:#fff;border-color:#534ab7}
+.btn-primary:hover{background:#3c3489;border-color:#3c3489}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-danger{background:#fcebeb;color:#a32d2d;border-color:#f09595;padding:4px 8px;font-size:11px}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+.bg{background:#e1f5ee;color:#085041}
+.bp{background:#eeedfe;color:#3c3489}
+.player-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0e8}
+.player-row:last-child{border-bottom:none}
+/* Match row */
+.match-row{display:flex;align-items:center;gap:4px;padding:7px 0;border-bottom:1px solid #f0f0e8}
+.match-row:last-child{border-bottom:none}
+.match-player{flex:1;min-width:0}
+.match-player .pn{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-player.r{text-align:right}
+.score-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.score-input{width:40px;padding:5px 2px;text-align:center;border:1px solid #e0e0d8;border-radius:6px;font-size:14px;font-weight:600;background:#f9f9f6}
+.score-input:focus{border-color:#534ab7;outline:none;background:#fff}
+.colon{font-size:15px;color:#bbb;font-weight:300}
+.done-mark{width:18px;text-align:center;font-size:13px;color:#1d9e75;flex-shrink:0}
+/* Liga Tabelle */
+.liga-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.liga-table th{text-align:left;padding:5px 6px;color:#888;border-bottom:2px solid #f0f0e8;font-weight:500;white-space:nowrap}
+.liga-table td{padding:5px 6px;border-bottom:1px solid #f0f0e8}
+.liga-table tr:last-child td{border-bottom:none}
+.liga-table .pts{font-weight:700;color:#534ab7}
+.liga-table .rank{color:#888;font-size:11px;text-align:center}
+.liga-table .qualifies{background:#eeedfe}
+.liga-table .cutoff-row td{border-bottom:2px dashed #afa9ec}
+/* Lot box */
+.lot-box{background:#f5f5f0;border-radius:12px;padding:2rem;text-align:center;margin:1rem 0}
+.lot-name{font-size:22px;font-weight:700;color:#534ab7;min-height:32px}
+.lot-sub{font-size:12px;color:#888;margin-top:.5rem;min-height:18px}
+.lot-match-list{margin-top:1rem;text-align:left}
+/* Misc */
+.warn{background:#faeeda;color:#633806;border-radius:8px;padding:.6rem .9rem;font-size:12px;margin-bottom:8px}
+.info{background:#eeedfe;color:#3c3489;border-radius:8px;padding:.6rem .9rem;font-size:12px;margin-bottom:8px}
+.success{background:#e1f5ee;color:#085041;border-radius:8px;padding:.6rem .9rem;font-size:12px;margin-bottom:8px}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap;align-items:center}
+.save-bar{display:flex;align-items:center;gap:8px}
+.save-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
+.save-dot.ok{background:#1d9e75}.save-dot.err{background:#e24b4a}.save-dot.saving{background:#ef9f27;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.save-txt{font-size:11px;color:#888}
+/* Winner / KO */
+.winner-box{margin-top:1rem;text-align:center;padding:1rem;background:#e1f5ee;border-radius:12px;border:2px solid #1d9e75}
+.winner-box .wl{font-size:12px;color:#085041}
+.winner-box .wn{font-size:20px;font-weight:700;color:#085041;margin-top:4px}
+.final-card{border:2px solid #534ab7!important}
+.ko-title{font-size:13px;font-weight:600;color:#534ab7;margin-bottom:.5rem}
+/* Viewer */
+.viewer-header{background:#534ab7;color:#fff;border-radius:12px;padding:1rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.viewer-header h1{font-size:16px;font-weight:600;color:#fff}
+.refresh-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer}
+.refresh-btn:hover{background:rgba(255,255,255,.3)}
+.live-badge{display:inline-block;background:rgba(255,255,255,.25);font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;margin-left:6px}
+.vsec-title{font-size:15px;font-weight:600;margin-bottom:.75rem;color:#534ab7;border-bottom:2px solid #eeedfe;padding-bottom:.4rem}
+.cfg-wrap{max-width:480px;margin:4rem auto}
+/* Viewer big screen */
+@media(min-width:1100px) and (max-width:1499px){
+  .viewer-big-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+}
+@media(min-width:1500px){
+  .viewer-big-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+}
+/* Match nr badge */
+.mnr{font-size:10px;color:#aaa;min-width:28px;flex-shrink:0}
+/* Spielplan: match-group per round */
+.round-section{margin-bottom:1rem}
+.round-title{font-size:12px;font-weight:600;color:#888;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
+/* Progress bar */
+.prog-bar{height:6px;border-radius:3px;background:#f0f0e8;margin-top:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:#1d9e75;transition:width .4s}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}.steps{gap:4px}.step{padding:4px 8px;font-size:11px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- CONFIG -->
+<div id="config-screen" style="display:none">
+  <div class="cfg-wrap">
+    <div class="card">
+      <div class="card-title" style="font-size:16px">🏆 Vereinsmeisterschaft TC Ampflwang</div>
+      <p style="font-size:13px;color:#666;margin-bottom:1rem">Bitte Google Sheets API-Key und Sheet-ID eingeben.</p>
+      <div style="margin-bottom:12px">
+        <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">Google Sheets API Key</label>
+        <input type="text" id="cfg-apikey" placeholder="AIzaSy...">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">Sheet ID</label>
+        <input type="text" id="cfg-sheetid" placeholder="1DXIcD0dB-...">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">Modus</label>
+        <select id="cfg-mode">
+          <option value="admin">Turnierleiter</option>
+          <option value="viewer">Live-Ansicht</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="startApp()" style="width:100%">Starten</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-app" style="display:none">
+  <div class="header">
+    <div><h1>🏆 Vereinsmeisterschaft TC Ampflwang</h1><div class="sub" id="admin-sub">Turnierleiter · Herren Einzel</div></div>
+    <div class="save-bar">
+      <div class="save-dot" id="save-dot"></div>
+      <span class="save-txt" id="save-txt">Bereit</span>
+      <a id="sheet-link" href="#" target="_blank" style="font-size:11px;color:#534ab7;text-decoration:none;margin-left:8px">↗ Sheet</a>
+      <button class="btn btn-danger btn-sm" onclick="confirmNewTournament()" style="margin-left:8px;font-size:11px;padding:3px 10px">🗑 Neues Turnier</button>
+      <button class="btn btn-sm" onclick="switchToViewer()" style="font-size:11px;padding:3px 10px">📺 Live-Ansicht</button>
+    </div>
+  </div>
+  <div class="steps" id="steps-nav">
+    <div class="step active" data-step="0">1 · Spieler</div>
+    <div class="step" data-step="1">2 · Spielplan auslosen</div>
+    <div class="step" data-step="2">3 · Liga / Ergebnisse</div>
+    <div class="step" data-step="3">4 · KO-Runde</div>
+  </div>
+
+  <!-- Step 1: Spieler -->
+  <div class="page active" id="page-0">
+    <div class="grid3" style="margin-bottom:1rem">
+      <div class="stat"><div class="n" id="cnt-players">0</div><div class="l">Spieler</div></div>
+      <div class="stat"><div class="n" id="cnt-games">–</div><div class="l">Spiele pro Spieler</div></div>
+      <div class="stat"><div class="n" id="cnt-total">–</div><div class="l">Spiele gesamt</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Spieler hinzufügen</div>
+      <div class="row">
+        <input type="text" id="new-name" placeholder="Spielername" style="flex:1">
+        <button class="btn btn-primary btn-sm" id="add-btn">+ Hinzufügen</button>
+      </div>
+      <div id="player-list"><div style="color:#aaa;font-size:13px;padding:.5rem 0">Noch keine Spieler.</div></div>
+    </div>
+    <div id="games-hint" class="info" style="display:none"></div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="step1to2()">Weiter zur Auslosung →</button></div>
+  </div>
+
+  <!-- Step 2: Auslosung -->
+  <div class="page" id="page-1">
+    <div id="draw-info" class="info" style="display:none"></div>
+    <div class="lot-box">
+      <div style="font-size:12px;color:#888;margin-bottom:.75rem" id="lot-counter">Bereit</div>
+      <div class="lot-name" id="lot-p1">–</div>
+      <div style="font-size:14px;color:#ccc;margin:.25rem 0">spielt gegen</div>
+      <div class="lot-name" id="lot-p2">–</div>
+      <div class="lot-sub" id="lot-sub"></div>
+    </div>
+    <div class="nav-row" style="margin-top:.75rem;margin-bottom:.75rem">
+      <button class="btn btn-primary" id="draw-btn" onclick="drawNextMatch()">🎲 Auslosung starten</button>
+      <button class="btn" id="to-liga-btn" style="display:none" onclick="step2to3()">Weiter zur Liga →</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmNewTournament()" style="margin-left:auto">🗑 Neues Turnier</button>
+    </div>
+    <div class="card" id="draw-matches-card" style="display:none">
+      <div class="card-title">Ausgeloste Spiele <span class="badge bg" id="draw-match-count"></span></div>
+      <div id="draw-matches-list"></div>
+    </div>
+  </div>
+
+  <!-- Step 3: Liga -->
+  <div class="page" id="page-2">
+    <div id="liga-phase"></div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="step3to4()">Weiter zur KO-Runde →</button></div>
+  </div>
+
+  <!-- Step 4: KO -->
+  <div class="page" id="page-3">
+    <div id="ko-phase"></div>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div id="viewer-app" style="display:none">
+  <div class="viewer-header">
+    <div>
+      <h1>🏆 Vereinsmeisterschaft TC Ampflwang <span class="live-badge">LIVE</span></h1>
+      <div style="font-size:11px;opacity:.7;margin-top:2px" id="viewer-updated"></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="refresh-btn" onclick="viewerRefresh()">↻ Aktualisieren</button>
+      <button class="refresh-btn" onclick="switchToAdmin()" title="Turnierleiter">🔒</button>
+    </div>
+  </div>
+  <div id="viewer-content"></div>
+</div>
+
+</div><!-- .app -->
+
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzv2cpJvk5iZVQd3GcuLFbooo7ffg0Ha0vRvMpNNUTAmGWzqvWlPVM1hHibyZoYxxKE/exec';
+const ADMIN_PASSWORD = 'TennisCA1979!';
+const MIN_GAMES = 3;
+const MAX_GAMES = 7;
+const KO_SLOTS = 8; // top 8 qualify
+
+let CFG = {apiKey:'', sheetId:'', mode:'admin'};
+let S = {players:[], matches:[], koMatches:[], step:0, maxStep:0, drawn:false};
+let saveTimer = null;
+let drawQueue = [];
+let drawIdx = 0;
+let drawPhase = 0; // 0=ready, 1=showing p1, 2=done
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function init(){
+  const p = new URLSearchParams(location.search);
+  const key = p.get('key'), sheet = p.get('sheet'), isView = p.get('view')==='1';
+  if(key && sheet){
+    CFG = {apiKey:key, sheetId:sheet, mode:isView?'viewer':'admin'};
+    localStorage.setItem('vm_cfg', JSON.stringify(CFG));
+    isView ? startViewer() : startAdmin();
+    return;
+  }
+  const saved = localStorage.getItem('vm_cfg');
+  if(saved){
+    CFG = JSON.parse(saved);
+    if(CFG.apiKey && CFG.sheetId){ CFG.mode==='viewer' ? startViewer() : startAdmin(); return; }
+  }
+  document.getElementById('config-screen').style.display = 'block';
+  if(isView) document.getElementById('cfg-mode').value = 'viewer';
+}
+
+function startApp(){
+  CFG.apiKey = document.getElementById('cfg-apikey').value.trim();
+  CFG.sheetId = document.getElementById('cfg-sheetid').value.trim();
+  CFG.mode = document.getElementById('cfg-mode').value;
+  if(!CFG.apiKey || !CFG.sheetId){alert('Bitte API-Key und Sheet-ID eingeben.');return;}
+  localStorage.setItem('vm_cfg', JSON.stringify(CFG));
+  document.getElementById('config-screen').style.display = 'none';
+  CFG.mode==='viewer' ? startViewer() : startAdmin();
+}
+
+async function startAdmin(){
+  document.getElementById('admin-app').style.display = 'block';
+  document.getElementById('sheet-link').href = `https://docs.google.com/spreadsheets/d/${CFG.sheetId}`;
+  setSave('loading','Lade...');
+  await loadState();
+  goStep(S.step||0);
+  renderPlayers();
+  updateGamesHint();
+  if(S.drawn && S.matches.length) renderDrawnMatches();
+  if(S.step>=2) renderLiga();
+  if(S.step>=3 && S.koMatches && S.koMatches.length) renderKO();
+}
+
+function startViewer(){
+  document.getElementById('viewer-app').style.display = 'block';
+  viewerRefresh();
+  setInterval(viewerRefresh, 30000);
+}
+
+// ─── SAVE / LOAD ─────────────────────────────────────────────────────────────
+function setSave(st, txt){
+  const dot = document.getElementById('save-dot'), el = document.getElementById('save-txt');
+  if(!dot) return;
+  dot.className = 'save-dot' + (st==='ok'?' ok':st==='err'?' err':st==='saving'?' saving':'');
+  el.textContent = txt;
+}
+function scheduleSave(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveState, 800); }
+async function saveState(){
+  setSave('saving','Speichere...');
+  try{
+    await fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({sheetId:CFG.sheetId, value:JSON.stringify(S)})});
+    setSave('ok','Gespeichert ✓');
+  } catch(e){ setSave('err','Netzwerkfehler'); }
+}
+async function loadState(){
+  try{
+    const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CFG.sheetId}/values/TurnierDaten!A1?key=${CFG.apiKey}`);
+    if(!res.ok){ setSave('err','Kein Zugriff'); return; }
+    const data = await res.json();
+    const val = data.values?.[0]?.[0];
+    if(val){ const l = JSON.parse(val); if(l && l.players){ S = l; setSave('ok','Stand geladen ✓'); return; } }
+    setSave('ok','Neues Turnier');
+  } catch(e){ setSave('err','Ladefehler'); }
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function goStep(n){
+  S.step = n;
+  if(!S.maxStep || n > S.maxStep) S.maxStep = n;
+  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i===n));
+  document.querySelectorAll('.step').forEach((s,i) => {
+    s.classList.toggle('active', i===n);
+    s.classList.toggle('done', i<n || (i>n && i<=S.maxStep));
+  });
+}
+
+// ─── STEP 1: SPIELER ─────────────────────────────────────────────────────────
+function calcGamesPerPlayer(n){
+  // Each match uses 2 players, so total matches = n * gpp / 2
+  // We want gpp in [MIN_GAMES..MAX_GAMES], and n*gpp must be even
+  if(n < 2) return 0;
+  for(let gpp = MIN_GAMES; gpp <= MAX_GAMES; gpp++){
+    if((n * gpp) % 2 === 0) return gpp;
+  }
+  return MAX_GAMES;
+}
+
+function updateGamesHint(){
+  const n = S.players.length;
+  document.getElementById('cnt-players').textContent = n;
+  if(n < 2){
+    document.getElementById('cnt-games').textContent = '–';
+    document.getElementById('cnt-total').textContent = '–';
+    document.getElementById('games-hint').style.display = 'none';
+    return;
+  }
+  const gpp = calcGamesPerPlayer(n);
+  const total = n * gpp / 2;
+  document.getElementById('cnt-games').textContent = gpp;
+  document.getElementById('cnt-total').textContent = total;
+  const hint = document.getElementById('games-hint');
+  hint.style.display = 'block';
+  hint.textContent = `Bei ${n} Spielern: je ${gpp} Spiele pro Spieler = ${total} Spiele gesamt. Top ${Math.min(KO_SLOTS,n)} qualifizieren sich für die KO-Runde.`;
+}
+
+function addPlayer(){
+  const name = document.getElementById('new-name').value.trim();
+  if(!name) return;
+  if(S.players.find(p => p.name.toLowerCase()===name.toLowerCase())){ alert('Spieler bereits vorhanden.'); return; }
+  S.players.push({id: Date.now(), name});
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-name').focus();
+  renderPlayers();
+  updateGamesHint();
+  scheduleSave();
+}
+
+function removePlayer(id){
+  if(S.drawn){ alert('Spielplan bereits ausgelost – Spieler kann nicht mehr entfernt werden.'); return; }
+  S.players = S.players.filter(p => p.id !== id);
+  renderPlayers();
+  updateGamesHint();
+  scheduleSave();
+}
+
+function renderPlayers(){
+  const el = document.getElementById('player-list');
+  if(!S.players.length){ el.innerHTML='<div style="color:#aaa;font-size:13px;padding:.5rem 0">Noch keine Spieler.</div>'; return; }
+  el.innerHTML = S.players.map((p,i) => `
+    <div class="player-row">
+      <span style="color:#aaa;font-size:12px;min-width:20px">${i+1}.</span>
+      <span style="flex:1;font-size:13px">${esc(p.name)}</span>
+      ${!S.drawn ? `<button class="btn btn-danger btn-sm" onclick="removePlayer(${p.id})">✕</button>` : ''}
+    </div>`).join('');
+}
+
+function step1to2(){
+  if(S.players.length < 4){ alert('Mindestens 4 Spieler nötig.'); return; }
+  goStep(1);
+  prepDrawPage();
+}
+
+// ─── STEP 2: AUSLOSUNG ───────────────────────────────────────────────────────
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function prepDrawPage(){
+  const n = S.players.length;
+  const gpp = calcGamesPerPlayer(n);
+  const total = n * gpp / 2;
+  const info = document.getElementById('draw-info');
+  info.style.display = 'block';
+  info.textContent = `${n} Spieler · ${gpp} Spiele pro Spieler · ${total} Spiele gesamt`;
+  if(S.drawn && S.matches.length){
+    renderDrawnMatches();
+    document.getElementById('draw-matches-card').style.display = 'block';
+    document.getElementById('to-liga-btn').style.display = 'inline-block';
+    document.getElementById('draw-btn').textContent = '🎲 Neu auslosen';
+    document.getElementById('lot-counter').textContent = 'Auslosung abgeschlossen ✓';
+  }
+}
+
+function buildSchedule(){
+  // Round-robin with exactly gpp games per player using a round-robin tournament algorithm
+  const n = S.players.length;
+  const gpp = calcGamesPerPlayer(n);
+  const players = shuffle([...S.players]);
+
+  // Use circular round-robin: generate all rounds, then pick gpp rounds per player
+  // For n players: if n is even, n-1 rounds of n/2 matches; if odd, n rounds of floor(n/2) matches
+  const isEven = n % 2 === 0;
+  const numRounds = isEven ? n-1 : n;
+  const list = isEven ? [...players] : [...players, null]; // null = bye
+  const m = list.length;
+
+  const allRounds = [];
+  const arr = list.slice();
+  for(let r = 0; r < numRounds; r++){
+    const round = [];
+    for(let i = 0; i < m/2; i++){
+      const p1 = arr[i], p2 = arr[m-1-i];
+      if(p1 !== null && p2 !== null) round.push([p1, p2]);
+    }
+    allRounds.push(round);
+    // rotate: fix arr[0], rotate arr[1..m-1]
+    const last = arr[m-1];
+    for(let i = m-1; i > 1; i--) arr[i] = arr[i-1];
+    arr[1] = last;
+  }
+
+  // We need exactly gpp rounds of matches (each round = 1 match per player)
+  // If gpp < numRounds, pick gpp rounds; if gpp === numRounds use all
+  const selectedRounds = allRounds.slice(0, gpp);
+
+  const matches = [];
+  let mid = 1;
+  selectedRounds.forEach((round, ri) => {
+    round.forEach(([p1, p2]) => {
+      matches.push({
+        id: mid++,
+        p1id: p1.id,
+        p1: p1.name,
+        p2id: p2.id,
+        p2: p2.name,
+        round: ri+1,
+        s1: '', s2: '',
+        done: false
+      });
+    });
+  });
+  return matches;
+}
+
+let drawMatchList = [];
+let drawMatchIdx = 0;
+
+function drawNextMatch(){
+  const btn = document.getElementById('draw-btn');
+  if(drawPhase === 0){
+    // Start fresh
+    if(S.drawn && S.matches.some(m => m.done)){ alert('Ergebnisse bereits eingetragen – Auslosung kann nicht wiederholt werden.'); return; }
+    drawMatchList = buildSchedule();
+    drawMatchIdx = 0;
+    drawPhase = 1;
+    S.matches = [];
+    document.getElementById('lot-p1').textContent = '–';
+    document.getElementById('lot-p2').textContent = '–';
+    document.getElementById('lot-sub').textContent = '';
+    document.getElementById('draw-matches-card').style.display = 'none';
+    document.getElementById('to-liga-btn').style.display = 'none';
+    document.getElementById('lot-counter').textContent = `0 von ${drawMatchList.length} Spielen`;
+    btn.textContent = '► Nächstes Spiel ziehen';
+    return;
+  }
+  if(drawPhase === 1){
+    if(drawMatchIdx >= drawMatchList.length){ finishDraw(); return; }
+    const m = drawMatchList[drawMatchIdx];
+    document.getElementById('lot-counter').textContent = `Spiel ${drawMatchIdx+1} von ${drawMatchList.length} (Runde ${m.round})`;
+    document.getElementById('lot-p1').textContent = m.p1;
+    document.getElementById('lot-p2').textContent = '…';
+    document.getElementById('lot-sub').textContent = '';
+    btn.textContent = '► Gegner aufdecken';
+    drawPhase = 2;
+    return;
+  }
+  if(drawPhase === 2){
+    const m = drawMatchList[drawMatchIdx];
+    document.getElementById('lot-p2').textContent = m.p2;
+    document.getElementById('lot-sub').textContent = `${m.p1} vs. ${m.p2}`;
+    S.matches.push(m);
+    renderDrawnMatches();
+    document.getElementById('draw-matches-card').style.display = 'block';
+    drawMatchIdx++;
+    drawPhase = 1;
+    btn.textContent = drawMatchIdx >= drawMatchList.length ? '► Auslosung abschließen' : '► Nächstes Spiel ziehen';
+  }
+}
+
+function finishDraw(){
+  S.drawn = true;
+  document.getElementById('lot-counter').textContent = 'Auslosung abgeschlossen ✓';
+  document.getElementById('lot-sub').textContent = '';
+  document.getElementById('lot-p1').textContent = '✓';
+  document.getElementById('lot-p2').textContent = '';
+  document.getElementById('draw-btn').textContent = '🎲 Neu auslosen';
+  drawPhase = 0;
+  document.getElementById('to-liga-btn').style.display = 'inline-block';
+  scheduleSave();
+}
+
+function renderDrawnMatches(){
+  const el = document.getElementById('draw-matches-list');
+  document.getElementById('draw-match-count').textContent = S.matches.length + ' Spiele';
+  // Group by round
+  const rounds = {};
+  S.matches.forEach(m => { if(!rounds[m.round]) rounds[m.round] = []; rounds[m.round].push(m); });
+  el.innerHTML = Object.entries(rounds).map(([r, ms]) => `
+    <div class="round-section">
+      <div class="round-title">Runde ${r}</div>
+      ${ms.map(m => `<div class="match-row">
+        <span class="mnr">#${m.id}</span>
+        <div class="match-player"><div class="pn">${esc(m.p1)}</div></div>
+        <span style="font-size:12px;color:#aaa;flex-shrink:0;padding:0 6px">vs.</span>
+        <div class="match-player r"><div class="pn">${esc(m.p2)}</div></div>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+function step2to3(){
+  goStep(2);
+  renderLiga();
+}
+
+// ─── STEP 3: LIGA ────────────────────────────────────────────────────────────
+function calcStandings(){
+  const table = {};
+  S.players.forEach(p => {
+    table[p.id] = {id:p.id, name:p.name, played:0, won:0, lost:0, pts:0, setsFor:0, setsAgainst:0, diff:0};
+  });
+  S.matches.forEach(m => {
+    if(!m.done) return;
+    const s1 = parseInt(m.s1)||0, s2 = parseInt(m.s2)||0;
+    const r1 = table[m.p1id], r2 = table[m.p2id];
+    if(!r1||!r2) return;
+    r1.played++; r2.played++;
+    r1.setsFor += s1; r1.setsAgainst += s2;
+    r2.setsFor += s2; r2.setsAgainst += s1;
+    if(s1 > s2){ r1.won++; r1.pts+=3; r2.lost++; }
+    else if(s2 > s1){ r2.won++; r2.pts+=3; r1.lost++; }
+    // draw: no pts (should not happen in tennis)
+  });
+  Object.values(table).forEach(r => r.diff = r.setsFor - r.setsAgainst);
+  return Object.values(table).sort((a,b) => b.pts-a.pts || b.diff-a.diff || b.setsFor-a.setsFor || a.name.localeCompare(b.name));
+}
+
+function renderLiga(){
+  const el = document.getElementById('liga-phase');
+  const standings = calcStandings();
+  const total = S.matches.length;
+  const done = S.matches.filter(m => m.done).length;
+  const qualify = Math.min(KO_SLOTS, S.players.length);
+
+  // Group matches by round
+  const rounds = {};
+  S.matches.forEach(m => { if(!rounds[m.round]) rounds[m.round] = []; rounds[m.round].push(m); });
+
+  // Tabelle
+  const tableHtml = `
+    <div class="card">
+      <div class="card-title">Ligatabelle
+        <span class="badge bg" style="margin-left:auto">${done}/${total} Spiele</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${total?Math.round(done/total*100):0}%"></div></div>
+      <table class="liga-table" style="margin-top:12px">
+        <thead><tr>
+          <th class="rank">#</th>
+          <th>Spieler</th>
+          <th title="Spiele">Sp</th>
+          <th title="Siege">S</th>
+          <th title="Niederlagen">N</th>
+          <th title="Sätze">Sätze</th>
+          <th class="pts">Pts</th>
+        </tr></thead>
+        <tbody>
+          ${standings.map((r,i) => `
+            <tr class="${i<qualify?'qualifies':''}${i===qualify-1?' cutoff-row':''}">
+              <td class="rank">${i<qualify?`<strong>${i+1}</strong>`:i+1}</td>
+              <td>${esc(r.name)} ${i<qualify?'<span class="badge bp" style="font-size:10px">KO</span>':''}</td>
+              <td style="color:#888">${r.played}</td>
+              <td style="color:#1d9e75">${r.won}</td>
+              <td style="color:#e24b4a">${r.lost}</td>
+              <td style="color:#888">${r.setsFor}:${r.setsAgainst}</td>
+              <td class="pts">${r.pts}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="info" style="margin-top:8px;margin-bottom:0">
+        🟣 Top ${qualify} qualifizieren sich für die KO-Runde · 3 Punkte pro Sieg · Tiebreaker: Satzdifferenz
+      </div>
+    </div>`;
+
+  // Spielplan
+  const matchHtml = Object.entries(rounds).map(([r, ms]) => `
+    <div class="card">
+      <div class="card-title">Runde ${r}
+        <span class="badge ${ms.every(m=>m.done)?'bg':'bp'}" style="margin-left:auto">${ms.filter(m=>m.done).length}/${ms.length}</span>
+      </div>
+      ${ms.map(m => {
+        const w = m.done ? (parseInt(m.s1)>parseInt(m.s2)?m.p1id:m.p2id) : null;
+        return `<div class="match-row">
+          <span class="mnr">#${m.id}</span>
+          <div class="match-player">
+            <div class="pn" style="font-weight:${w===m.p1id?700:400}">${esc(m.p1)}</div>
+          </div>
+          <div class="score-wrap">
+            <input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}"
+              oninput="setScore(${m.id},'s1',this.value)">
+            <span class="colon">:</span>
+            <input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}"
+              oninput="setScore(${m.id},'s2',this.value)">
+          </div>
+          <div class="match-player r">
+            <div class="pn" style="font-weight:${w===m.p2id?700:400}">${esc(m.p2)}</div>
+          </div>
+          <span class="done-mark">${m.done?'✓':''}</span>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+
+  el.innerHTML = tableHtml + matchHtml;
+}
+
+function setScore(id, field, val){
+  const m = S.matches.find(m => m.id===id);
+  if(!m) return;
+  m[field] = val;
+  const s1 = parseInt(m.s1), s2 = parseInt(m.s2);
+  m.done = !isNaN(s1) && !isNaN(s2) && m.s1!=='' && m.s2!=='' && s1!==s2;
+  renderLiga();
+  scheduleSave();
+}
+
+// ─── STEP 4: KO ──────────────────────────────────────────────────────────────
+function step3to4(){
+  const done = S.matches.filter(m => m.done).length;
+  const total = S.matches.length;
+  if(done < total){
+    if(!confirm(`Noch ${total-done} Ligaspiele offen. Trotzdem zur KO-Runde?`)) return;
+  }
+  buildKOBracket();
+  goStep(3);
+  renderKO();
+}
+
+function buildKOBracket(){
+  if(S.koMatches && S.koMatches.length) return; // already built
+  const standings = calcStandings();
+  const qualify = Math.min(KO_SLOTS, S.players.length);
+  const seeds = standings.slice(0, qualify);
+  const tbd = {id:-1, name:'TBD'};
+
+  // Classic seeding: 1v8, 2v7, 3v6, 4v5
+  const ms = [];
+  const pairs = [
+    [seeds[0]||tbd, seeds[7]||tbd],
+    [seeds[3]||tbd, seeds[4]||tbd],
+    [seeds[2]||tbd, seeds[5]||tbd],
+    [seeds[1]||tbd, seeds[6]||tbd],
+  ];
+  pairs.forEach((pair,i) => {
+    ms.push({id:`qf${i+1}`, round:'Viertelfinale', label:`VF ${i+1}`,
+      p1:{id:pair[0].id,name:pair[0].name}, p2:{id:pair[1].id,name:pair[1].name},
+      s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:false});
+  });
+  // HF: winners of QF1vQF2, QF3vQF4
+  ms.push({id:'hf1',round:'Halbfinale',label:'HF 1',p1:tbd,p2:tbd,s1:'',s2:'',done:false,best2:false,dep:['qf1','qf2']});
+  ms.push({id:'hf2',round:'Halbfinale',label:'HF 2',p1:tbd,p2:tbd,s1:'',s2:'',done:false,best2:false,dep:['qf3','qf4']});
+  ms.push({id:'p3',round:'Spiel um Platz 3',label:'Platz 3',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,depLosers:['hf1','hf2']});
+  ms.push({id:'fin',round:'Finale',label:'Finale',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,dep:['hf1','hf2']});
+
+  S.koMatches = ms;
+  scheduleSave();
+}
+
+function getKOWinner(m){
+  if(!m.done) return null;
+  if(!m.best2){
+    const s1=parseInt(m.s1)||0,s2=parseInt(m.s2)||0;
+    return s1>s2 ? m.p1 : m.p2;
+  }
+  // best of 3
+  const sets = [[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];
+  let w1=0,w2=0;
+  sets.forEach(([a,b])=>{ if(a+b>0){ if(a>b)w1++; else if(b>a)w2++; }});
+  return w1>w2?m.p1:m.p2;
+}
+function getKOLoser(m){
+  const w = getKOWinner(m); if(!w) return null;
+  return w.id===m.p1.id ? m.p2 : m.p1;
+}
+
+function resolveKODeps(){
+  const byId = {};
+  S.koMatches.forEach(m => byId[m.id]=m);
+  S.koMatches.forEach(m => {
+    if(m.dep){
+      const [d1,d2] = m.dep;
+      const w1 = getKOWinner(byId[d1]), w2 = getKOWinner(byId[d2]);
+      if(w1 && m.p1.id===-1) m.p1 = w1;
+      if(w2 && m.p2.id===-1) m.p2 = w2;
+    }
+    if(m.depLosers){
+      const [d1,d2] = m.depLosers;
+      const l1 = getKOLoser(byId[d1]), l2 = getKOLoser(byId[d2]);
+      if(l1 && m.p1.id===-1) m.p1 = l1;
+      if(l2 && m.p2.id===-1) m.p2 = l2;
+    }
+  });
+}
+
+function renderKO(){
+  resolveKODeps();
+  const el = document.getElementById('ko-phase');
+  const rounds = [...new Set(S.koMatches.map(m=>m.round))];
+  el.innerHTML = rounds.map(round => {
+    const ms = S.koMatches.filter(m=>m.round===round);
+    const isFin = round==='Finale'||round==='Spiel um Platz 3';
+    const isP3 = round==='Spiel um Platz 3';
+    const cardClass = round==='Finale'?' final-card':'';
+    const cardStyle = isP3?' style="border:2px solid #ef9f27;margin-bottom:8px"':' style="margin-bottom:8px"';
+    return `<div class="card${cardClass}"${cardStyle}>
+      <div class="ko-title" style="${isP3?'color:#633806':''}">${round}</div>
+      ${ms.map(m => {
+        const w = getKOWinner(m);
+        let scoreHtml = '';
+        if(m.best2){
+          // 3 score pairs
+          scoreHtml = `<div class="score-wrap" style="flex-direction:column;gap:3px">
+            <div class="score-wrap">
+              <input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}" oninput="setKOScore('${m.id}','s1',this.value)">
+              <span class="colon">:</span>
+              <input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}" oninput="setKOScore('${m.id}','s2',this.value)">
+            </div>
+            <div class="score-wrap">
+              <input class="score-input" type="number" min="0" max="99" value="${esc(m.s1b)}" oninput="setKOScore('${m.id}','s1b',this.value)">
+              <span class="colon">:</span>
+              <input class="score-input" type="number" min="0" max="99" value="${esc(m.s2b)}" oninput="setKOScore('${m.id}','s2b',this.value)">
+            </div>
+            ${(parseInt(m.s1)||0)>0&&(parseInt(m.s1b)||0)>0?`<div class="score-wrap">
+              <input class="score-input" type="number" min="0" max="99" value="${esc(m.s1c)}" oninput="setKOScore('${m.id}','s1c',this.value)" placeholder="-">
+              <span class="colon">:</span>
+              <input class="score-input" type="number" min="0" max="99" value="${esc(m.s2c)}" oninput="setKOScore('${m.id}','s2c',this.value)" placeholder="-">
+            </div>`:''}
+          </div>`;
+        } else {
+          scoreHtml = `<div class="score-wrap">
+            <input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}" oninput="setKOScore('${m.id}','s1',this.value)">
+            <span class="colon">:</span>
+            <input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}" oninput="setKOScore('${m.id}','s2',this.value)">
+          </div>`;
+        }
+        return `<div class="match-row" style="flex-wrap:wrap">
+          <span class="mnr">${m.label}</span>
+          <div class="match-player"><div class="pn" style="font-weight:${w&&w.id===m.p1.id?700:400}">${esc(m.p1.name)}</div></div>
+          ${scoreHtml}
+          <div class="match-player r"><div class="pn" style="font-weight:${w&&w.id===m.p2.id?700:400}">${esc(m.p2.name)}</div></div>
+          <span class="done-mark">${m.done?'✓':''}</span>
+        </div>${w&&isFin?`<div class="winner-box" style="${isP3?'border-color:#ef9f27;background:#faeeda':''}"><div class="wl">${isP3?'🥉 Platz 3':'🏆 Vereinsmeister'}</div><div class="wn" style="${isP3?'color:#633806':''}">${esc(w.name)}</div></div>`:''}`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function setKOScore(id, field, val){
+  const m = S.koMatches.find(m=>m.id===id);
+  if(!m) return;
+  m[field] = val;
+  if(!m.best2){
+    const s1=parseInt(m.s1),s2=parseInt(m.s2);
+    m.done = !isNaN(s1)&&!isNaN(s2)&&m.s1!==''&&m.s2!==''&&s1!==s2;
+  } else {
+    // best of 3: done when someone has 2 set wins
+    const sets = [[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];
+    let w1=0,w2=0;
+    sets.forEach(([a,b])=>{ if(a+b>0){ if(a>b)w1++; else if(b>a)w2++; }});
+    m.done = w1===2||w2===2;
+  }
+  resolveKODeps();
+  renderKO();
+  scheduleSave();
+}
+
+// ─── VIEWER ──────────────────────────────────────────────────────────────────
+async function viewerRefresh(){
+  const el = document.getElementById('viewer-content');
+  try{
+    const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CFG.sheetId}/values/TurnierDaten!A1?key=${CFG.apiKey}`);
+    if(!res.ok){ el.innerHTML='<div class="card" style="color:#e24b4a">Ladefehler – kein Zugriff auf das Sheet.</div>'; return; }
+    const data = await res.json();
+    const val = data.values?.[0]?.[0];
+    if(!val){ el.innerHTML='<div class="card" style="text-align:center;color:#aaa;padding:3rem">Turnier noch nicht gestartet.</div>'; return; }
+    const vs = JSON.parse(val);
+    document.getElementById('viewer-updated').textContent = 'Stand: ' + new Date().toLocaleTimeString('de-AT');
+    renderViewer(vs, el);
+  } catch(e){ el.innerHTML='<div class="card" style="color:#e24b4a">Verbindungsfehler.</div>'; }
+}
+
+function renderViewer(vs, el){
+  if(!vs || !vs.players || !vs.players.length){
+    el.innerHTML='<div class="card" style="text-align:center;color:#aaa;padding:3rem">Turnier noch nicht gestartet.</div>';
+    return;
+  }
+
+  let ligaHtml='', koHtml='';
+
+  // Liga Tabelle
+  if(vs.matches && vs.matches.length){
+    const table = {};
+    vs.players.forEach(p => { table[p.id]={id:p.id,name:p.name,played:0,won:0,lost:0,pts:0,setsFor:0,setsAgainst:0,diff:0}; });
+    vs.matches.forEach(m => {
+      if(!m.done) return;
+      const s1=parseInt(m.s1)||0,s2=parseInt(m.s2)||0;
+      const r1=table[m.p1id],r2=table[m.p2id];
+      if(!r1||!r2) return;
+      r1.played++;r2.played++;
+      r1.setsFor+=s1;r1.setsAgainst+=s2;r2.setsFor+=s2;r2.setsAgainst+=s1;
+      if(s1>s2){r1.won++;r1.pts+=3;r2.lost++;}else if(s2>s1){r2.won++;r2.pts+=3;r1.lost++;}
+      r1.diff=r1.setsFor-r1.setsAgainst; r2.diff=r2.setsFor-r2.setsAgainst;
+    });
+    const standings = Object.values(table).sort((a,b)=>b.pts-a.pts||b.diff-a.diff||b.setsFor-a.setsFor||a.name.localeCompare(b.name));
+    const qualify = Math.min(KO_SLOTS, vs.players.length);
+    const done = vs.matches.filter(m=>m.done).length;
+    const total = vs.matches.length;
+
+    ligaHtml = `<div>
+      <div class="vsec-title">🏅 Ligatabelle · Herren Einzel</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:12px;color:#888">${done} von ${total} Spielen gespielt</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${total?Math.round(done/total*100):0}%"></div></div>
+        <table class="liga-table" style="margin-top:10px">
+          <thead><tr><th class="rank">#</th><th>Spieler</th><th>Sp</th><th>S</th><th>N</th><th>Sätze</th><th class="pts">Pts</th></tr></thead>
+          <tbody>
+            ${standings.map((r,i)=>`<tr class="${i<qualify?'qualifies':''}${i===qualify-1?' cutoff-row':''}">
+              <td class="rank">${i<qualify?`<strong>${i+1}</strong>`:i+1}</td>
+              <td>${esc(r.name)}${i<qualify?' <span class="badge bp" style="font-size:10px">KO</span>':''}</td>
+              <td style="color:#888">${r.played}</td>
+              <td style="color:#1d9e75">${r.won}</td>
+              <td style="color:#e24b4a">${r.lost}</td>
+              <td style="color:#888">${r.setsFor}:${r.setsAgainst}</td>
+              <td class="pts">${r.pts}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
+  // KO
+  if(vs.koMatches && vs.koMatches.length){
+    const rounds = [...new Set(vs.koMatches.map(m=>m.round))];
+    koHtml = `<div>
+      <div class="vsec-title">🏆 KO-Runde</div>
+      ${rounds.map(round => {
+        const ms = vs.koMatches.filter(m=>m.round===round);
+        const isFin = round==='Finale'||round==='Spiel um Platz 3';
+        const isP3 = round==='Spiel um Platz 3';
+        const cardClass = round==='Finale'?' final-card':'';
+        const cardStyle = isP3?' style="border:2px solid #ef9f27;margin-bottom:8px"':' style="margin-bottom:8px"';
+        return `<div class="card${cardClass}"${cardStyle}>
+          <div class="ko-title" style="${isP3?'color:#633806':''}">${round}</div>
+          ${ms.map(m => {
+            // compute winner for viewer
+            let w=null;
+            if(m.done){
+              if(!m.best2){const s1=parseInt(m.s1)||0,s2=parseInt(m.s2)||0;w=s1>s2?m.p1:m.p2;}
+              else{const sets=[[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];let w1=0,w2=0;sets.forEach(([a,b])=>{if(a+b>0){if(a>b)w1++;else if(b>a)w2++;}});w=w1>w2?m.p1:m.p2;}
+            }
+            let score='-';
+            if(m.done){
+              score=m.s1+':'+m.s2;
+              if(m.best2&&(m.s1b||m.s2b))score+=' / '+m.s1b+':'+m.s2b;
+              if(m.best2&&(m.s1c||m.s2c))score+=' / '+m.s1c+':'+m.s2c;
+            }
+            return `<div class="match-row">
+              <span class="mnr">${m.label}</span>
+              <div class="match-player"><div class="pn" style="font-weight:${w&&w.id===m.p1.id?700:400}">${esc(m.p1.name)}</div></div>
+              <span style="font-size:13px;color:#534ab7;font-weight:600;min-width:80px;text-align:center;flex-shrink:0">${score}</span>
+              <div class="match-player r"><div class="pn" style="font-weight:${w&&w.id===m.p2.id?700:400}">${esc(m.p2.name)}</div></div>
+            </div>${w&&isFin?`<div class="winner-box" style="${isP3?'border-color:#ef9f27;background:#faeeda':''}"><div class="wl">${isP3?'🥉 Platz 3':'🏆 Vereinsmeister'}</div><div class="wn" style="${isP3?'color:#633806':''}">${esc(w.name)}</div></div>`:''}`;
+          }).join('')}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // Pending Liga matches for viewer (upcoming/open)
+  let spielplanHtml = '';
+  if(vs.matches && vs.matches.length){
+    const open = vs.matches.filter(m=>!m.done);
+    if(open.length){
+      const rounds = {};
+      open.forEach(m=>{ if(!rounds[m.round]) rounds[m.round]=[]; rounds[m.round].push(m); });
+      spielplanHtml = `<div>
+        <div class="vsec-title">📋 Ausstehende Spiele</div>
+        ${Object.entries(rounds).map(([r,ms])=>`
+          <div class="card">
+            <div class="card-title">Runde ${r}</div>
+            ${ms.map(m=>`<div class="match-row">
+              <span class="mnr">#${m.id}</span>
+              <div class="match-player"><div class="pn">${esc(m.p1)}</div></div>
+              <span style="font-size:12px;color:#ccc;flex-shrink:0;padding:0 8px">vs.</span>
+              <div class="match-player r"><div class="pn">${esc(m.p2)}</div></div>
+            </div>`).join('')}
+          </div>`).join('')}
+      </div>`;
+    }
+  }
+
+  // Layout
+  if(!ligaHtml && !koHtml){
+    el.innerHTML='<div class="card" style="text-align:center;color:#aaa;padding:3rem">Turnier noch nicht gestartet.</div>';
+    return;
+  }
+  if(window.innerWidth >= 1100){
+    el.innerHTML=`<div class="viewer-big-grid">
+      <div>${spielplanHtml}</div>
+      <div>${ligaHtml}</div>
+      <div>${koHtml}</div>
+    </div>`;
+  } else {
+    el.innerHTML = ligaHtml + spielplanHtml + koHtml;
+  }
+}
+
+// ─── MISC ────────────────────────────────────────────────────────────────────
+function switchToAdmin(){
+  const pw = prompt('Passwort für Turnierleiter-Ansicht:');
+  if(pw===null) return;
+  if(pw===ADMIN_PASSWORD){
+    CFG.mode='admin';
+    localStorage.setItem('vm_cfg',JSON.stringify(CFG));
+    document.getElementById('viewer-app').style.display='none';
+    document.getElementById('admin-app').style.display='block';
+    startAdmin();
+  } else { alert('Falsches Passwort.'); }
+}
+function switchToViewer(){
+  CFG.mode='viewer';
+  localStorage.setItem('vm_cfg',JSON.stringify(CFG));
+  document.getElementById('admin-app').style.display='none';
+  document.getElementById('viewer-app').style.display='block';
+  viewerRefresh();
+}
+
+function confirmNewTournament(){
+  if(!confirm('Neues Turnier starten?\nAlle Daten werden gelöscht!')) return;
+  if(!confirm('Wirklich? Diese Aktion kann nicht rückgängig gemacht werden.')) return;
+  S = {players:[], matches:[], koMatches:[], step:0, maxStep:0, drawn:false};
+  renderPlayers();
+  updateGamesHint();
+  document.getElementById('draw-matches-card').style.display='none';
+  document.getElementById('to-liga-btn').style.display='none';
+  document.getElementById('draw-btn').textContent='🎲 Auslosung starten';
+  document.getElementById('lot-p1').textContent='–';
+  document.getElementById('lot-p2').textContent='–';
+  document.getElementById('lot-sub').textContent='';
+  document.getElementById('lot-counter').textContent='Bereit';
+  document.getElementById('draw-info').style.display='none';
+  document.getElementById('liga-phase').innerHTML='';
+  document.getElementById('ko-phase').innerHTML='';
+  saveState();
+  goStep(0);
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.step').forEach(s => s.addEventListener('click',()=>{
+    if(s.classList.contains('done')||s.classList.contains('active')){
+      const n=+s.dataset.step;
+      goStep(n);
+      if(n===2) renderLiga();
+      if(n===3&&S.koMatches&&S.koMatches.length) renderKO();
+    }
+  }));
+  document.getElementById('new-name').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('add-btn').click(); });
+  document.getElementById('add-btn').addEventListener('click',addPlayer);
+  init();
+});
+</script>
+</body>
+</html>
