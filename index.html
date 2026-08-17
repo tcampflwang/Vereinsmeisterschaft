@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vereinsmeisterschaft TC Ampflwang</title>
+<title>[DEV] Vereinsmeisterschaft TC Ampflwang</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#127942;</text></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -18,6 +18,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .cat-tab{padding:8px 20px;border-radius:10px;border:2px solid #e0e0d8;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#888;transition:all .15s}
 .cat-tab:hover{background:#f5f5f0}
 .cat-tab.active{background:#534ab7;color:#fff;border-color:#534ab7}
+.cat-select-wrap{position:relative;display:inline-block}
+.cat-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;padding:6px 30px 6px 14px;border-radius:8px;border:1px solid #534ab7;font-size:12px;font-weight:600;cursor:pointer;background:#534ab7;color:#fff;outline:none;line-height:1.4}
+.cat-select-wrap::after{content:'';position:absolute;right:12px;top:50%;width:6px;height:6px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:translateY(-65%) rotate(45deg);pointer-events:none}
+.cat-select:hover{background:#3c3489;border-color:#3c3489}
 .steps{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
 .step{padding:6px 14px;border-radius:8px;border:1px solid #e0e0d8;font-size:12px;color:#888;cursor:default;user-select:none;transition:all .15s}
 .step.active{background:#eeedfe;color:#3c3489;border-color:#afa9ec;font-weight:600}
@@ -36,6 +40,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 .row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 .btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #e0e0d8;background:#fff;color:#1a1a1a;transition:all .15s}
 .btn:hover{background:#f5f5f0}.btn:active{transform:scale(.98)}
+.btn:disabled,.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
 .btn-primary{background:#534ab7;color:#fff;border-color:#534ab7}
 .btn-primary:hover{background:#3c3489;border-color:#3c3489}
 .btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
@@ -51,7 +56,8 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 .match-player .pn{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .match-player.r{text-align:right}
 .score-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.score-input{width:38px;padding:4px 2px;text-align:center;border:1px solid #e0e0d8;border-radius:6px;font-size:13px;font-weight:600;background:#f9f9f6}
+input.score-input{width:26px;padding:4px 1px;text-align:center;border:1px solid #e0e0d8;border-radius:6px;font-size:13px;font-weight:600;background:#f9f9f6;-moz-appearance:textfield;appearance:textfield}
+.score-input::-webkit-outer-spin-button,.score-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .score-input:focus{border-color:#534ab7;outline:none;background:#fff}
 .colon{font-size:14px;color:#bbb;font-weight:300}
 .done-mark{width:18px;text-align:center;font-size:12px;color:#1d9e75;flex-shrink:0}
@@ -62,6 +68,11 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 .liga-table .pts{font-weight:700;color:#534ab7}
 .liga-table .rank{color:#888;font-size:11px;text-align:center}
 .liga-table .qualifies{background:#eeedfe}
+.liga-table td:nth-child(2){max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ko-toggle-btn{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;cursor:pointer;border:1px solid #5dcaa5;background:#e1f5ee;color:#085041;white-space:nowrap;transition:all .15s}
+.ko-toggle-btn:hover{opacity:.8}
+.ko-toggle-btn.excluded{border-color:#f09595;background:#fcebeb;color:#a32d2d}
+.ko-excluded-row{opacity:.6}
 .liga-table .cutoff-row td{border-bottom:2px dashed #afa9ec}
 .rounds-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 @media(max-width:700px){.rounds-grid{grid-template-columns:1fr}}
@@ -100,19 +111,37 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 .gpp-btn.selected{background:#534ab7;color:#fff;border-color:#534ab7}
 .gpp-btn.suggested{border-color:#534ab7;color:#534ab7;font-weight:700}
 .gpp-btn.selected.suggested{background:#534ab7;color:#fff}
-@media(max-width:600px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}.steps{gap:4px}.step{padding:4px 8px;font-size:11px}}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}.steps{gap:4px}.step{padding:4px 8px;font-size:11px}
+.btn-label{display:none}
+.viewer-updated-line{display:none}
+.viewer-header{padding:.75rem 1rem}
+.viewer-header h1{font-size:14px}
+.refresh-btn{padding:6px 9px}
+.cat-tab{padding:6px 14px;font-size:12px}
+.vtab-btn{padding:6px 12px;font-size:12px}
+.cat-tabs{margin-bottom:.6rem !important}
+.controls-row{margin-bottom:.6rem !important;gap:6px !important}
+.liga-table td:nth-child(2){max-width:96px}
+}
 .vtab-btn{padding:7px 18px;border-radius:8px;border:1px solid #e0e0d8;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:#888;transition:all .15s}
 .vtab-btn:hover{background:#f5f5f0}
 .vtab-btn.vtab-active{background:#534ab7;color:#fff;border-color:#534ab7}
+.dev-banner{background:#e2574c;color:#fff;text-align:center;font-size:12px;font-weight:700;padding:7px 10px;letter-spacing:.03em;position:sticky;top:0;z-index:999}
+.dev-tool-bar{display:flex;align-items:center;gap:8px;background:#fdf1ef;border:1px dashed #e2574c;border-radius:8px;padding:8px 12px;margin-bottom:12px;flex-wrap:wrap}
+.dev-tool-label{font-size:12px;font-weight:700;color:#a32d2d}
+.dev-tool-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;border:1px solid #e2574c;background:#fff;color:#a32d2d;cursor:pointer}
+.dev-tool-btn:hover{background:#fcebeb}
+.dev-badge{display:inline-block;background:#e2574c;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;margin-left:6px;vertical-align:middle;letter-spacing:.03em}
 </style>
 </head>
 <body>
+<div class="dev-banner">&#9888;&#65039; DEV-UMGEBUNG &mdash; keine Live-Daten, nicht f&uuml;r Turnierbetrieb verwenden</div>
 <div class="app">
 
 <!-- ADMIN -->
 <div id="admin-app" style="display:none">
   <div class="header">
-    <div><h1>&#127942; Vereinsmeisterschaft TC Ampflwang</h1><div class="sub" id="admin-sub">Turnierleiter</div></div>
+    <div><h1>&#127942; Vereinsmeisterschaft TC Ampflwang <span class="dev-badge">DEV</span></h1><div class="sub" id="admin-sub">Turnierleiter</div></div>
     <div class="save-bar">
       <div class="save-dot" id="save-dot"></div>
       <span class="save-txt" id="save-txt">Bereit</span>
@@ -121,15 +150,19 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
       <button class="btn btn-sm" onclick="switchToViewer()" style="font-size:11px;padding:3px 10px">&#128250; Live</button>
     </div>
   </div>
-  <div class="cat-tabs">
-    <button class="cat-tab active" id="cat-tab-einzel" onclick="switchCat('einzel')">&#127934; Einzel</button>
-    <button class="cat-tab" id="cat-tab-doppel" onclick="switchCat('doppel')">&#129309; Doppel</button>
-  </div>
-  <div class="steps" id="steps-nav">
-    <div class="step active" data-step="0">1 &middot; Spieler</div>
-    <div class="step" data-step="1">2 &middot; Spielplan auslosen</div>
-    <div class="step" data-step="2">3 &middot; Liga / Ergebnisse</div>
-    <div class="step" data-step="3">4 &middot; KO-Runde</div>
+  <div class="controls-row" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem">
+    <div class="cat-select-wrap">
+      <select id="cat-select" class="cat-select" onchange="switchCat(this.value)">
+        <option value="einzel">&#127934; Einzel</option>
+        <option value="doppel">&#129309; Doppel</option>
+      </select>
+    </div>
+    <div class="steps" id="steps-nav" style="margin-bottom:0">
+      <div class="step active" data-step="0">Spieler</div>
+      <div class="step" data-step="1">Auslosung</div>
+      <div class="step" data-step="2">Liga</div>
+      <div class="step" data-step="3">KO-Runde</div>
+    </div>
   </div>
 
   <!-- Step 1 -->
@@ -195,12 +228,14 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 
   <!-- Step 3 -->
   <div class="page" id="page-2">
+    <div class="dev-tool-bar"><span class="dev-tool-label">&#129514; Dev-Tool:</span><button class="dev-tool-btn" onclick="simulateLiga()">Liga-Spiele simulieren</button></div>
     <div id="liga-phase"></div>
-    <div class="nav-row"><button class="btn btn-primary" onclick="step3to4()">Weiter zur KO-Runde &rarr;</button></div>
+    <div class="nav-row"><button class="btn btn-primary" id="to-ko-btn" onclick="step3to4()">Weiter zur KO-Runde &rarr;</button></div>
   </div>
 
   <!-- Step 4 -->
   <div class="page" id="page-3">
+    <div class="dev-tool-bar"><span class="dev-tool-label">&#129514; Dev-Tool:</span><button class="dev-tool-btn" onclick="simulateKO()">KO-Spiele simulieren</button></div>
     <div id="ko-phase"></div>
   </div>
 </div>
@@ -209,17 +244,23 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 <div id="viewer-app" style="display:none">
   <div class="viewer-header">
     <div>
-      <h1>&#127942; Vereinsmeisterschaft TC Ampflwang <span class="live-badge">LIVE</span></h1>
-      <div style="font-size:11px;opacity:.7;margin-top:2px" id="viewer-updated"></div>
+      <h1>&#127942; Vereinsmeisterschaft TC Ampflwang <span class="dev-badge">DEV</span></h1>
+      <div class="viewer-updated-line" style="font-size:11px;opacity:.7;margin-top:2px" id="viewer-updated"></div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button class="refresh-btn" onclick="viewerRefresh()">&#8635; Aktualisieren</button>
-      <button class="refresh-btn" onclick="switchToAdmin()" title="Turnierleiter">&#128274;</button>
+      <button class="refresh-btn" onclick="viewerRefresh()">&#8635; <span class="btn-label">Aktualisieren</span></button>
+      <button class="refresh-btn" onclick="switchToAdmin()" title="Turnierleiter">&#128274; <span class="btn-label">Admin</span></button>
     </div>
   </div>
-  <div class="cat-tabs" style="margin-bottom:1rem">
-    <button class="cat-tab active" id="vcat-tab-einzel" onclick="switchViewerCat('einzel')">&#127934; Einzel</button>
-    <button class="cat-tab" id="vcat-tab-doppel" onclick="switchViewerCat('doppel')">&#129309; Doppel</button>
+  <div class="controls-row" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem">
+    <div class="cat-select-wrap">
+      <select id="vcat-select" class="cat-select" onchange="switchViewerCat(this.value)">
+        <option value="einzel">&#127934; Einzel</option>
+        <option value="doppel">&#129309; Doppel</option>
+      </select>
+    </div>
+    <button class="vtab-btn vtab-active" data-tab="tabelle" onclick="viewerSetTab('tabelle')">&#127942; Tabelle &amp; KO</button>
+    <button class="vtab-btn" data-tab="spielplan" onclick="viewerSetTab('spielplan')">&#127775; Spielplan</button>
   </div>
   <div id="viewer-content"></div>
 </div>
@@ -230,7 +271,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#7f77d
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzv2cpJvk5iZVQd3GcuLFbooo7ffg0Ha0vRvMpNNUTAmGWzqvWlPVM1hHibyZoYxxKE/exec';
 const ADMIN_PASSWORD='google';
 const DEFAULT_API_KEY='AIzaSyAo94rx6ENpy55jIdJAh2HqdgFF35uA7Z0';
-const DEFAULT_SHEET_ID='1nPDymZXpct5SS6U2z7kSdTGYSQx_3UNPyOzXeGqSsys';
+const DEFAULT_SHEET_ID='1ApGEz1l6kuZDIAivEiwJj8enu_-p-4kRunwVnDq9iPs'; // VMData_DEV
 
 // ── State ────────────────────────────────────────────────────────────────────
 // Top-level S holds both categories
@@ -276,6 +317,23 @@ function koRoundName(slots){
   if(slots>=4)return'Halbfinale';
   if(slots>=2)return'Finale';
   return'';
+}
+
+// ── Fokus-Erhalt bei Score-Feldern (verhindert "doppelt klicken" nach Re-Render) ─
+// Rendert verzögert (0ms), damit der Browser den Fokuswechsel zuerst regulär
+// abschließt. Erst danach lesen wir document.activeElement aus und stellen nach
+// dem Neu-Rendern den Fokus gezielt auf dem entsprechenden neuen Feld wieder her.
+function rerenderKeepFocus(renderFn){
+  setTimeout(function(){
+    const active=document.activeElement;
+    const key=(active&&active.classList&&active.classList.contains('score-input')&&active.dataset&&active.dataset.id!=null)
+      ?{id:active.dataset.id,fld:active.dataset.fld}:null;
+    renderFn();
+    if(key){
+      const el=document.querySelector(`.score-input[data-id="${CSS.escape(String(key.id))}"][data-fld="${CSS.escape(key.fld)}"]`);
+      if(el){el.focus();if(el.select)el.select();}
+    }
+  },0);
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
@@ -330,8 +388,7 @@ async function loadState(){
 // ── Category switching ────────────────────────────────────────────────────────
 function switchCat(cat){
   currentCat=cat;
-  document.getElementById('cat-tab-einzel').classList.toggle('active',cat==='einzel');
-  document.getElementById('cat-tab-doppel').classList.toggle('active',cat==='doppel');
+  const sel=document.getElementById('cat-select');if(sel)sel.value=cat;
   document.getElementById('admin-sub').textContent='Turnierleiter \u00b7 '+(cat==='einzel'?'Herren Einzel':'Doppel');
   document.getElementById('import-bar-einzel').style.display=cat==='einzel'&&!C().drawn?'':'none';
   document.getElementById('import-bar-doppel').style.display=cat==='doppel'&&!C().drawn?'':'none';
@@ -343,8 +400,8 @@ function switchCat(cat){
 }
 function switchViewerCat(cat){
   viewerCat=cat;
-  document.getElementById('vcat-tab-einzel').classList.toggle('active',cat==='einzel');
-  document.getElementById('vcat-tab-doppel').classList.toggle('active',cat==='doppel');
+  const sel=document.getElementById('vcat-select');
+  if(sel)sel.value=cat;
   renderViewer();
 }
 
@@ -503,7 +560,7 @@ function step2to3(){goStep(2);renderLiga();}
 
 // ── STEP 3 ────────────────────────────────────────────────────────────────────
 function calcStandings(){
-  const sc=C();const table={};sc.players.forEach(p=>{table[p.id]={id:p.id,name:p.name,played:0,won:0,lost:0,pts:0,gw:0,gl:0};});
+  const sc=C();const table={};sc.players.forEach(p=>{table[p.id]={id:p.id,name:p.name,koExcluded:!!p.koExcluded,played:0,won:0,lost:0,pts:0,gw:0,gl:0};});
   sc.matches.forEach(m=>{
     if(!m.done)return;
     const sets=[[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];
@@ -515,12 +572,42 @@ function calcStandings(){
   });
   return Object.values(table).sort((a,b)=>b.pts-a.pts||((b.gw-b.gl)-(a.gw-a.gl))||b.gw-a.gw||a.name.localeCompare(b.name));
 }
+function koQualifyingInfo(standings,qualify){
+  const eligible=standings.filter(r=>!r.koExcluded);
+  const qualifyingIds=new Set(eligible.slice(0,qualify).map(r=>r.id));
+  const cutoffId=eligible.length>=qualify?eligible[qualify-1].id:null;
+  return{qualifyingIds,cutoffId};
+}
+function ligaTableRows(standings,qualify,isAdmin){
+  const{qualifyingIds,cutoffId}=koQualifyingInfo(standings,qualify);
+  return standings.map((r,i)=>{
+    const diff=r.gw-r.gl;const isQ=qualifyingIds.has(r.id);const isCut=r.id===cutoffId;const excl=!!r.koExcluded;
+    const nameHtml=excl?'<span style="text-decoration:line-through;color:#aaa">'+esc(r.name)+'</span>':esc(r.name);
+    const koCol=isAdmin?`<td><button class="ko-toggle-btn${excl?' excluded':''}" onclick="toggleKOExclusion(${r.id})" title="${excl?'F\u00fcr KO-Runde wieder zulassen':'Von KO-Runde ausschlie\u00dfen'}">${excl?'\u{1F6AB} <span class="btn-label">Kein </span>KO':'\u2713 KO'}</button></td>`:'';
+    return`<tr class="${isQ?'qualifies':''}${isCut?' cutoff-row':''}${excl?' ko-excluded-row':''}"><td class="rank">${isQ?`<strong>${i+1}</strong>`:i+1}</td><td>${nameHtml}</td><td style="color:#888">${r.played}</td><td style="color:#1d9e75">${r.won}</td><td style="color:#e24b4a">${r.lost}</td><td style="color:#888">${r.gw}:${r.gl}</td><td style="font-weight:500;color:${diff>=0?'#085041':'#a32d2d'}">${diff>0?'+':''}${diff}</td><td class="pts">${r.pts}</td>${koCol}</tr>`;
+  }).join('');
+}
+function toggleKOExclusion(id){
+  const sc=C();const p=sc.players.find(p=>p.id===id);if(!p)return;
+  p.koExcluded=!p.koExcluded;
+  renderLiga();scheduleSave();
+}
+function updateToKoButton(){
+  const sc=C();const total=sc.matches.length,done=sc.matches.filter(m=>m.done).length;
+  const btn=document.getElementById('to-ko-btn');
+  if(!btn)return;
+  const ready=total>0&&done>=total;
+  btn.disabled=!ready;
+  btn.title=ready?'':`Noch ${total-done} Ligaspiel${total-done===1?'':'e'} offen`;
+}
 function renderLiga(){
   const sc=C();const el=document.getElementById('liga-phase');
   const standings=calcStandings();
   const total=sc.matches.length,done=sc.matches.filter(m=>m.done).length;
   const qualify=sc.koSlots||suggestedKO(sc.players.length)||2;
-  const tableHtml=`<div class="card"><div class="card-title">Ligatabelle <span class="badge bg" style="margin-left:auto">${done}/${total} Spiele</span></div><div class="prog-bar"><div class="prog-fill" style="width:${total?Math.round(done/total*100):0}%"></div></div><table class="liga-table" style="margin-top:12px"><thead><tr><th class="rank">#</th><th>Teilnehmer</th><th>Sp</th><th>S</th><th>N</th><th>Games</th><th>+/-</th><th class="pts">Pts</th></tr></thead><tbody>${standings.map((r,i)=>{const diff=r.gw-r.gl;return`<tr class="${i<qualify?'qualifies':''}${i===qualify-1?' cutoff-row':''}"><td class="rank">${i<qualify?`<strong>${i+1}</strong>`:i+1}</td><td>${esc(r.name)}</td><td style="color:#888">${r.played}</td><td style="color:#1d9e75">${r.won}</td><td style="color:#e24b4a">${r.lost}</td><td style="color:#888">${r.gw}:${r.gl}</td><td style="font-weight:500;color:${diff>=0?'#085041':'#a32d2d'}">${diff>0?'+':''}${diff}</td><td class="pts">${r.pts}</td></tr>`;}).join('')}</tbody></table><div class="info" style="margin-top:8px;margin-bottom:0">\u{1F7E3} Top ${qualify} \u2192 ${koRoundName(qualify)} \u00b7 3 Punkte pro Sieg \u00b7 Tiebreaker: Game-Differenz</div></div>`;
+  updateToKoButton();
+  const excludedCount=standings.filter(r=>r.koExcluded).length;
+  const tableHtml=`<div class="card"><div class="card-title">Ligatabelle <span class="badge bg" style="margin-left:auto">${done}/${total} Spiele</span></div><div class="prog-bar"><div class="prog-fill" style="width:${total?Math.round(done/total*100):0}%"></div></div><table class="liga-table" style="margin-top:12px"><thead><tr><th class="rank">#</th><th>Teilnehmer</th><th>Sp</th><th>S</th><th>N</th><th>Games</th><th>+/-</th><th class="pts">Pts</th><th>KO</th></tr></thead><tbody>${ligaTableRows(standings,qualify,true)}</tbody></table><div class="info" style="margin-top:8px;margin-bottom:0">\u{1F7E3} Top ${qualify} \u2192 ${koRoundName(qualify)} \u00b7 3 Punkte pro Sieg \u00b7 Tiebreaker: Game-Differenz${excludedCount?' \u00b7 '+excludedCount+' Spieler nicht f\u00fcr KO verf\u00fcgbar (n\u00e4chste r\u00fccken nach)':''}</div></div>`;
   const rounds={};sc.matches.forEach(m=>{if(!rounds[m.round])rounds[m.round]=[];rounds[m.round].push(m);});
   const roundNums=Object.keys(rounds).map(Number).sort((a,b)=>a-b);
   const pairs=[];for(let i=0;i<roundNums.length;i+=2)pairs.push([roundNums[i],roundNums[i+1]??null]);
@@ -581,27 +668,74 @@ function setScore(id,field,val){
   const sets=[[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];
   let w1=0,w2=0;sets.forEach(ab=>{if(ab[0]+ab[1]>0){if(ab[0]>ab[1])w1++;else if(ab[1]>ab[0])w2++;}});
   m.done=w1===2||w2===2;
-  if(window._ligaFilter){
-    const qualify=sc.koSlots||suggestedKO(sc.players.length)||2;
-    const standings=calcStandings();
-    const tbl=document.querySelector('.liga-table tbody');
-    if(tbl){tbl.innerHTML=standings.map((r,i)=>{const diff=r.gw-r.gl;const isQ=i<qualify,isCut=i===qualify-1;return'<tr class="'+(isQ?'qualifies':'')+(isCut?' cutoff-row':'')+'"><td class="rank">'+(isQ?'<strong>'+(i+1)+'</strong>':(i+1))+'</td><td>'+esc(r.name)+'</td><td style="color:#888">'+r.played+'</td><td style="color:#1d9e75">'+r.won+'</td><td style="color:#e24b4a">'+r.lost+'</td><td style="color:#888">'+r.gw+':'+r.gl+'</td><td style="font-weight:500;color:'+(diff>=0?'#085041':'#a32d2d')+'">'+(diff>0?'+':'')+diff+'</td><td class="pts">'+r.pts+'</td></tr>';}).join('');}
-    applyLigaFilter();
-  } else {renderLiga();}
   scheduleSave();
+  if(window._ligaFilter){
+    rerenderKeepFocus(function(){
+      const qualify=sc.koSlots||suggestedKO(sc.players.length)||2;
+      const standings=calcStandings();
+      const tbl=document.querySelector('.liga-table tbody');
+      if(tbl){tbl.innerHTML=ligaTableRows(standings,qualify,true);}
+      applyLigaFilter();
+      updateToKoButton();
+    });
+  } else {
+    rerenderKeepFocus(renderLiga);
+  }
+}
+
+// ── DEV-TOOL: Testdaten simulieren (NUR für Dev-Umgebung, nicht für Produktivbetrieb!) ─
+function simRandomSet(){
+  const opts=[[6,0],[6,1],[6,2],[6,3],[6,4],[7,5]];
+  return opts[Math.floor(Math.random()*opts.length)];
+}
+function simFillBestOf3(m){
+  const p1WinsMatch=Math.random()<0.5;
+  const straight=Math.random()<0.7;
+  function orderedSet(p1Wins){const[a,b]=simRandomSet();return p1Wins?[a,b]:[b,a];}
+  const sets=straight
+    ?[orderedSet(p1WinsMatch),orderedSet(p1WinsMatch)]
+    :[orderedSet(p1WinsMatch),orderedSet(!p1WinsMatch),orderedSet(p1WinsMatch)];
+  m.s1=String(sets[0][0]);m.s2=String(sets[0][1]);
+  m.s1b=String(sets[1][0]);m.s2b=String(sets[1][1]);
+  if(sets[2]){m.s1c=String(sets[2][0]);m.s2c=String(sets[2][1]);}else{m.s1c='';m.s2c='';}
+  m.done=true;
+}
+function simulateLiga(){
+  const sc=C();
+  const open=sc.matches.filter(m=>!m.done).length;
+  if(!open){alert('Alle Liga-Spiele sind bereits eingetragen.');return;}
+  if(!confirm(`${open} offene Liga-Spiele mit zuf\u00e4lligen Testergebnissen bef\u00fcllen? Nur f\u00fcr Testzwecke, nicht r\u00fcckg\u00e4ngig zu machen.`))return;
+  sc.matches.forEach(m=>{if(!m.done)simFillBestOf3(m);});
+  renderLiga();scheduleSave();
+}
+function simulateKO(){
+  const sc=C();
+  if(!sc.koMatches||!sc.koMatches.length){alert('Es wurde noch kein KO-Bracket erstellt (Schritt 3 \u2192 4 zuerst abschlie\u00dfen).');return;}
+  if(!confirm('Alle m\u00f6glichen KO-Spiele mit zuf\u00e4lligen Testergebnissen bef\u00fcllen (inkl. Folgerunden)? Nur f\u00fcr Testzwecke.'))return;
+  let progressed=true,guard=0;
+  while(progressed&&guard<10){
+    progressed=false;guard++;
+    sc.koMatches.forEach(m=>{
+      if(!m.done&&m.p1&&m.p2&&m.p1.id!==-1&&m.p2.id!==-1){simFillBestOf3(m);progressed=true;}
+    });
+    resolveKODeps();
+  }
+  renderKO();scheduleSave();
 }
 
 // ── STEP 4 KO ─────────────────────────────────────────────────────────────────
 function step3to4(){
   const sc=C();const done=sc.matches.filter(m=>m.done).length,total=sc.matches.length;
-  if(done<total){if(!confirm(`Noch ${total-done} Ligaspiele offen. Trotzdem zur KO-Runde?`))return;}
+  if(total===0||done<total)return; // Button ist deaktiviert solange offen; das hier ist nur eine Absicherung
   buildKOBracket();goStep(3);renderKO();
 }
 function buildKOBracket(){
-  const sc=C();if(sc.koMatches&&sc.koMatches.length)return;
+  const sc=C();
+  // Sicherheitsbremse: sobald irgendwo ein KO-Ergebnis eingetragen wurde, nicht mehr neu bauen/überschreiben
+  if(sc.koMatches&&sc.koMatches.some(m=>m.done))return;
   const standings=calcStandings();
   const slots=sc.koSlots||suggestedKO(sc.players.length)||2;
-  const seeds=standings.slice(0,slots);
+  const seeds=standings.filter(r=>!r.koExcluded).slice(0,slots);
   const tbd={id:-1,name:'TBD'};
   const ligaDone=sc.matches.every(m=>m.done);
   const ms=[];
@@ -609,15 +743,15 @@ function buildKOBracket(){
   if(slots>=8){
     // Quarterfinal (8 teams)
     const pp=ligaDone?[[seeds[0]||tbd,seeds[7]||tbd],[seeds[3]||tbd,seeds[4]||tbd],[seeds[2]||tbd,seeds[5]||tbd],[seeds[1]||tbd,seeds[6]||tbd]]:[[tbd,tbd],[tbd,tbd],[tbd,tbd],[tbd,tbd]];
-    pp.forEach((pair,i)=>{ms.push({id:`qf${i+1}`,round:'Viertelfinale',label:`VF ${i+1}`,p1:{id:pair[0].id,name:pair[0].name},p2:{id:pair[1].id,name:pair[1].name},s1:'',s2:'',done:false,best2:false});});
-    ms.push({id:'hf1',round:'Halbfinale',label:'HF 1',p1:tbd,p2:tbd,s1:'',s2:'',done:false,best2:false,dep:['qf1','qf2']});
-    ms.push({id:'hf2',round:'Halbfinale',label:'HF 2',p1:tbd,p2:tbd,s1:'',s2:'',done:false,best2:false,dep:['qf3','qf4']});
+    pp.forEach((pair,i)=>{ms.push({id:`qf${i+1}`,round:'Viertelfinale',label:`VF ${i+1}`,p1:{id:pair[0].id,name:pair[0].name},p2:{id:pair[1].id,name:pair[1].name},s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true});});
+    ms.push({id:'hf1',round:'Halbfinale',label:'HF 1',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,dep:['qf1','qf2']});
+    ms.push({id:'hf2',round:'Halbfinale',label:'HF 2',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,dep:['qf3','qf4']});
     ms.push({id:'p3',round:'Spiel um Platz 3',label:'Platz 3',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,depLosers:['hf1','hf2']});
     ms.push({id:'fin',round:'Finale',label:'Finale',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,dep:['hf1','hf2']});
   } else if(slots>=4){
     // Semifinal (4 teams)
     const pp=ligaDone?[[seeds[0]||tbd,seeds[3]||tbd],[seeds[1]||tbd,seeds[2]||tbd]]:[[tbd,tbd],[tbd,tbd]];
-    pp.forEach((pair,i)=>{ms.push({id:`hf${i+1}`,round:'Halbfinale',label:`HF ${i+1}`,p1:{id:pair[0].id,name:pair[0].name},p2:{id:pair[1].id,name:pair[1].name},s1:'',s2:'',done:false,best2:false});});
+    pp.forEach((pair,i)=>{ms.push({id:`hf${i+1}`,round:'Halbfinale',label:`HF ${i+1}`,p1:{id:pair[0].id,name:pair[0].name},p2:{id:pair[1].id,name:pair[1].name},s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true});});
     ms.push({id:'p3',round:'Spiel um Platz 3',label:'Platz 3',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,depLosers:['hf1','hf2']});
     ms.push({id:'fin',round:'Finale',label:'Finale',p1:tbd,p2:tbd,s1:'',s2:'',s1b:'',s2b:'',s1c:'',s2c:'',done:false,best2:true,dep:['hf1','hf2']});
   } else {
@@ -628,9 +762,20 @@ function buildKOBracket(){
   }
   sc.koMatches=ms;scheduleSave();
 }
-function getKOWinner(m){if(!m.done)return null;if(!m.best2){const s1=parseInt(m.s1)||0,s2=parseInt(m.s2)||0;return s1>s2?m.p1:m.p2;}const sets=[[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];let w1=0,w2=0;sets.forEach(([a,b])=>{if(a+b>0){if(a>b)w1++;else if(b>a)w2++;}});return w1>w2?m.p1:m.p2;}
+function koTally(m){
+  const pairs=[[m.s1,m.s2],[m.s1b,m.s2b],[m.s1c,m.s2c]];
+  let w1=0,w2=0;
+  pairs.forEach(([a,b])=>{
+    if(a===''||a==null||b===''||b==null)return; // Satz noch nicht vollständig eingetragen -> nicht werten
+    const na=parseInt(a)||0,nb=parseInt(b)||0;
+    if(na===0&&nb===0)return;
+    if(na>nb)w1++;else if(nb>na)w2++;
+  });
+  return{w1,w2};
+}
+function getKOWinner(m){if(!m.done)return null;if(!m.best2){const s1=parseInt(m.s1)||0,s2=parseInt(m.s2)||0;return s1>s2?m.p1:m.p2;}const{w1,w2}=koTally(m);return w1>w2?m.p1:m.p2;}
 function getKOLoser(m){const w=getKOWinner(m);if(!w)return null;return w.id===m.p1.id?m.p2:m.p1;}
-function resolveKODeps(){const sc=C();const byId={};sc.koMatches.forEach(m=>byId[m.id]=m);sc.koMatches.forEach(m=>{if(m.dep){const[d1,d2]=m.dep;const w1=getKOWinner(byId[d1]),w2=getKOWinner(byId[d2]);if(w1&&m.p1.id===-1)m.p1=w1;if(w2&&m.p2.id===-1)m.p2=w2;}if(m.depLosers){const[d1,d2]=m.depLosers;const l1=getKOLoser(byId[d1]),l2=getKOLoser(byId[d2]);if(l1&&m.p1.id===-1)m.p1=l1;if(l2&&m.p2.id===-1)m.p2=l2;}});}
+function resolveKODeps(){const sc=C();const byId={};sc.koMatches.forEach(m=>byId[m.id]=m);const tbd={id:-1,name:'TBD'};sc.koMatches.forEach(m=>{if(m.done)return;if(m.dep){const[d1,d2]=m.dep;m.p1=getKOWinner(byId[d1])||tbd;m.p2=getKOWinner(byId[d2])||tbd;}if(m.depLosers){const[d1,d2]=m.depLosers;m.p1=getKOLoser(byId[d1])||tbd;m.p2=getKOLoser(byId[d2])||tbd;}});}
 function renderKO(){
   resolveKODeps();const sc=C();const el=document.getElementById('ko-phase');
   const winnerLabel=currentCat==='doppel'?'Doppelmeister':'Vereinsmeister';
@@ -643,13 +788,15 @@ function renderKO(){
     return`<div class="card${cardClass}"${cardStyle}><div class="ko-title" style="${isP3?'color:#633806':''}">${round}</div>${ms.map(m=>{
       const w=getKOWinner(m);let scoreHtml='';
       if(m.best2){
-        const st=`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}" oninput="setKOScore('${m.id}','s1',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}" oninput="setKOScore('${m.id}','s2',this.value)"></div>`;
-        const sb=`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1b)}" oninput="setKOScore('${m.id}','s1b',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2b)}" oninput="setKOScore('${m.id}','s2b',this.value)"></div>`;
-        const showC=(parseInt(m.s1)||0)>0&&(parseInt(m.s1b)||0)>0;
-        const sc2=showC?`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1c)}" oninput="setKOScore('${m.id}','s1c',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2c)}" oninput="setKOScore('${m.id}','s2c',this.value)"></div>`:'';
+        const st=`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}" data-id="${m.id}" data-fld="s1" onchange="setKOScore('${m.id}','s1',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}" data-id="${m.id}" data-fld="s2" onchange="setKOScore('${m.id}','s2',this.value)"></div>`;
+        const sb=`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1b)}" data-id="${m.id}" data-fld="s1b" onchange="setKOScore('${m.id}','s1b',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2b)}" data-id="${m.id}" data-fld="s2b" onchange="setKOScore('${m.id}','s2b',this.value)"></div>`;
+        const set1Played=(parseInt(m.s1)||0)+(parseInt(m.s2)||0)>0;
+        const set2Played=(parseInt(m.s1b)||0)+(parseInt(m.s2b)||0)>0;
+        const showC=(set1Played&&set2Played&&!m.done)||!!(m.s1c||m.s2c);
+        const sc2=showC?`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1c)}" data-id="${m.id}" data-fld="s1c" onchange="setKOScore('${m.id}','s1c',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2c)}" data-id="${m.id}" data-fld="s2c" onchange="setKOScore('${m.id}','s2c',this.value)"></div>`:'';
         scoreHtml=`<div class="score-wrap" style="flex-direction:column;gap:3px">${st}${sb}${sc2}</div>`;
       }else{
-        scoreHtml=`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}" oninput="setKOScore('${m.id}','s1',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}" oninput="setKOScore('${m.id}','s2',this.value)"></div>`;
+        scoreHtml=`<div class="score-wrap"><input class="score-input" type="number" min="0" max="99" value="${esc(m.s1)}" data-id="${m.id}" data-fld="s1" onchange="setKOScore('${m.id}','s1',this.value)"><span class="colon">:</span><input class="score-input" type="number" min="0" max="99" value="${esc(m.s2)}" data-id="${m.id}" data-fld="s2" onchange="setKOScore('${m.id}','s2',this.value)"></div>`;
       }
       return`<div class="match-row" style="flex-wrap:wrap"><span class="mnr">${m.label}</span><div class="match-player"><div class="pn" style="font-weight:${w&&w.id===m.p1.id?700:400}">${esc(m.p1.name)}</div></div>${scoreHtml}<div class="match-player r"><div class="pn" style="font-weight:${w&&w.id===m.p2.id?700:400}">${esc(m.p2.name)}</div></div><span class="done-mark">${m.done?'\u2713':''}</span></div>${w&&isFin?`<div class="winner-box" style="${isP3?'border-color:#ef9f27;background:#faeeda':''}"><div class="wl">${isP3?'\u{1F3C9} Platz 3':'\u{1F3C6} '+winnerLabel}</div><div class="wn" style="${isP3?'color:#633806':''}">${esc(w.name)}</div></div>`:''}`;
     }).join('')}</div>`;
@@ -659,8 +806,8 @@ function setKOScore(id,field,val){
   const sc=C();const m=sc.koMatches.find(m=>m.id===id);if(!m)return;
   m[field]=val;
   if(!m.best2){const s1=parseInt(m.s1),s2=parseInt(m.s2);m.done=!isNaN(s1)&&!isNaN(s2)&&m.s1!==''&&m.s2!==''&&s1!==s2;}
-  else{const sets=[[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];let w1=0,w2=0;sets.forEach(([a,b])=>{if(a+b>0){if(a>b)w1++;else if(b>a)w2++;}});m.done=w1===2||w2===2;}
-  resolveKODeps();renderKO();scheduleSave();
+  else{const{w1,w2}=koTally(m);m.done=w1===2||w2===2;}
+  resolveKODeps();scheduleSave();rerenderKeepFocus(renderKO);
 }
 
 // ── VIEWER ────────────────────────────────────────────────────────────────────
@@ -688,7 +835,7 @@ function renderViewer(){
   const catLabel=viewerCat==='doppel'?'Doppel':'Herren Einzel';
   const winnerLabel=viewerCat==='doppel'?'Doppelmeister':'Vereinsmeister';
   // Standings
-  const table={};vs.players.forEach(p=>{table[p.id]={id:p.id,name:p.name,played:0,won:0,lost:0,pts:0,gw:0,gl:0};});
+  const table={};vs.players.forEach(p=>{table[p.id]={id:p.id,name:p.name,koExcluded:!!p.koExcluded,played:0,won:0,lost:0,pts:0,gw:0,gl:0};});
   vs.matches.forEach(m=>{
     if(!m.done)return;
     const sets=[[parseInt(m.s1)||0,parseInt(m.s2)||0],[parseInt(m.s1b)||0,parseInt(m.s2b)||0],[parseInt(m.s1c)||0,parseInt(m.s2c)||0]];
@@ -701,9 +848,9 @@ function renderViewer(){
   const standings=Object.values(table).sort((a,b)=>b.pts-a.pts||((b.gw-b.gl)-(a.gw-a.gl))||b.gw-a.gw||a.name.localeCompare(b.name));
   const qualify=vs.koSlots||suggestedKO(vs.players.length)||2;
   const done=vs.matches.filter(m=>m.done).length,total=vs.matches.length;
-  let rows='';
-  standings.forEach((r,i)=>{const diff=r.gw-r.gl;const isQ=i<qualify,isCut=i===qualify-1;rows+='<tr class="'+(isQ?'qualifies':'')+(isCut?' cutoff-row':'')+'"><td class="rank">'+(isQ?'<strong>'+(i+1)+'</strong>':(i+1))+'</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.name)+'</td><td style="color:#888">'+r.played+'</td><td style="color:#1d9e75">'+r.won+'</td><td style="color:#e24b4a">'+r.lost+'</td><td style="color:#888">'+r.gw+':'+r.gl+'</td><td style="font-weight:500;color:'+(diff>=0?'#085041':'#a32d2d')+'">'+(diff>0?'+':'')+diff+'</td><td class="pts">'+r.pts+'</td></tr>';});
-  const ligaHtml='<div><div class="vsec-title">\u{1F3C5} Ligatabelle \u00b7 '+catLabel+'</div><div class="card"><div style="font-size:11px;color:#888;margin-bottom:8px">Sp = Spiele &nbsp;&middot;&nbsp; S = Siege &nbsp;&middot;&nbsp; N = Niederlagen &nbsp;&middot;&nbsp; G = Games &nbsp;&middot;&nbsp; +/- = Game-Diff &nbsp;&middot;&nbsp; <span style="color:#534ab7;font-weight:600">Pts</span> = Punkte &nbsp;&nbsp;<span style="font-size:10px">('+done+'/'+total+' Spiele)</span></div><table class="liga-table"><thead><tr><th class="rank">#</th><th>Teilnehmer</th><th title="Spiele">Sp</th><th title="Siege">S</th><th title="Niederlagen">N</th><th title="Games">G</th><th title="Game-Differenz">+/-</th><th class="pts">Pts</th></tr></thead><tbody>'+rows+'</tbody></table><div class="info" style="margin-top:8px;margin-bottom:0">\u{1F7E3} Top '+qualify+' \u2192 '+koRoundName(qualify)+' \u00b7 3 Punkte pro Sieg \u00b7 Tiebreaker: Game-Differenz</div></div></div>';
+  const rows=ligaTableRows(standings,qualify,false);
+  const excludedCountV=standings.filter(r=>r.koExcluded).length;
+  const ligaHtml='<div><div class="vsec-title">\u{1F3C5} Ligatabelle \u00b7 '+catLabel+'</div><div class="card"><div style="font-size:11px;color:#888;margin-bottom:8px">Sp = Spiele &nbsp;&middot;&nbsp; S = Siege &nbsp;&middot;&nbsp; N = Niederlagen &nbsp;&middot;&nbsp; G = Games &nbsp;&middot;&nbsp; +/- = Game-Diff &nbsp;&middot;&nbsp; <span style="color:#534ab7;font-weight:600">Pts</span> = Punkte &nbsp;&nbsp;<span style="font-size:10px">('+done+'/'+total+' Spiele)</span></div><table class="liga-table"><thead><tr><th class="rank">#</th><th>Teilnehmer</th><th title="Spiele">Sp</th><th title="Siege">S</th><th title="Niederlagen">N</th><th title="Games">G</th><th title="Game-Differenz">+/-</th><th class="pts">Pts</th></tr></thead><tbody>'+rows+'</tbody></table><div class="info" style="margin-top:8px;margin-bottom:0">\u{1F7E3} Top '+qualify+' \u2192 '+koRoundName(qualify)+' \u00b7 3 Punkte pro Sieg \u00b7 Tiebreaker: Game-Differenz'+(excludedCountV?' \u00b7 '+excludedCountV+' Spieler nicht f\u00fcr KO verf\u00fcgbar':'')+'</div></div></div>';
   // KO
   let koHtml='';
   const koData=vs.koMatches&&vs.koMatches.length?vs.koMatches:[];
@@ -763,16 +910,14 @@ function renderViewer(){
   }
   const tabelleContent=window.innerWidth>=1100&&koHtml?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'+ligaHtml+koHtml+'</div>':ligaHtml+koHtml;
   el.innerHTML=''
-    +'<div style="display:flex;gap:8px;margin-bottom:1rem">'
-    +'<button class="vtab-btn'+(_vTab==='tabelle'?' vtab-active':'')+'" data-tab="tabelle" onclick="viewerSetTab(\'tabelle\')">&#127942; Tabelle &amp; KO</button>'
-    +'<button class="vtab-btn'+(_vTab==='spielplan'?' vtab-active':'')+'" data-tab="spielplan" onclick="viewerSetTab(\'spielplan\')">&#127775; Spielplan</button>'
-    +'</div>'
     +'<div id="vtab-tabelle" style="'+(_vTab==='tabelle'?'':'display:none')+'">'
     +tabelleContent
     +'</div>'
     +'<div id="vtab-spielplan" style="'+(_vTab==='spielplan'?'':'display:none')+'">'
     +spielplanHtml
     +'</div>';
+  document.querySelectorAll('.vtab-btn').forEach(b=>b.classList.toggle('vtab-active',b.dataset.tab===_vTab));
+  const selEl=document.getElementById('vcat-select');if(selEl)selEl.value=viewerCat;
 }
 
 // ── IMPORTS ───────────────────────────────────────────────────────────────────
